@@ -7,20 +7,21 @@ module Convolution3x3 (
     output reg [9:0] output_pixel  // 10-bit output pixel value (to handle potential overflow)
 );
 
-    integer i, j;
-    reg [9:0] temp_sum;  // Temp variable to hold intermediate sum
-
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
             output_pixel <= 10'b0;
         end else begin
-            temp_sum = 0;
-            for (i = 0; i < 3; i = i + 1) begin
-                for (j = 0; j < 3; j = j + 1) begin
-                    temp_sum = temp_sum + input_patch[i][j] * kernel[i][j];
-                end
-            end
-            output_pixel <= temp_sum + bias;
+            output_pixel[7:0] = 
+                input_patch[0][0] * kernel[0][0] + 
+                input_patch[0][1] * kernel[0][1] + 
+                input_patch[0][2] * kernel[0][2] +
+                input_patch[1][0] * kernel[1][0] + 
+                input_patch[1][1] * kernel[1][1] + 
+                input_patch[1][2] * kernel[1][2] +
+                input_patch[2][0] * kernel[2][0] + 
+                input_patch[2][1] * kernel[2][1] + 
+                input_patch[2][2] * kernel[2][2];
+            output_pixel[7:0] = output_pixel[7:0] + bias[7:0];
         end
     end
 
